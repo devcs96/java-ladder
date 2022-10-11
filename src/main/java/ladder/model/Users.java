@@ -1,8 +1,10 @@
 package ladder.model;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Users {
 
@@ -23,18 +25,23 @@ public class Users {
         return this.users.size();
     }
 
-    public void addLine(List<HorizontalLine> horizontalLine) {
+    public List<VerticalLine> mapToVertical(List<HorizontalLine> horizontalLine) {
         horizontalLine.forEach((line) -> line.validate(this.size()));
+        List<VerticalLine> verticalLines = new ArrayList<>();
         for (int userIndex = 0; userIndex < this.users.size(); userIndex++) {
-            users.get(userIndex).addLine(VerticalLine.mapHorizontalLineToVertical(horizontalLine, userIndex));
+            verticalLines.add(VerticalLine.mapHorizontalLineToVertical(horizontalLine, userIndex));
         }
-    }
-
-    public boolean hasLine() {
-        return !this.users.stream().anyMatch(user -> !user.hasLine());
+        return verticalLines;
     }
 
     public List<User> getUsers() {
         return users;
+    }
+
+    public int findStartPositionByUsername(UserName name) {
+        return IntStream.range(0,this.size())
+                .filter((idx)->this.users.get(idx).equals(new User(name)))
+                .findFirst()
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 유저입니다."));
     }
 }

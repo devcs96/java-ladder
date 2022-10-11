@@ -1,8 +1,6 @@
 package ladder.ui;
 
-import ladder.model.LineUnit;
-import ladder.model.User;
-import ladder.model.Users;
+import ladder.model.*;
 
 public abstract class OutputView {
 
@@ -11,10 +9,10 @@ public abstract class OutputView {
     private static final String HORIZONTAL_UNIT = "-";
     private static final String VERTICAL_UNIT = "|";
 
-    public static void printLadder(Users users, int lineLength) {
+    public static void printLadder(Users users, Ladder ladder) {
         printName(users);
         System.out.println();
-        printLine(users, lineLength);
+        printLine(ladder , users);
     }
 
     private static void printName(Users users) {
@@ -32,19 +30,19 @@ public abstract class OutputView {
         System.out.print(addDelimiter(LADDER_USER_INTERVAL - username.length(), LADDER_WITH_NO_SPACE) + username);
     }
 
-    private static void printLine(Users users, int length) {
-        for (int lineIndex = 0; lineIndex < length; lineIndex++) {
-            printSingleLine(users, lineIndex);
+    private static void printLine(Ladder ladder ,Users users) {
+        for (int lineIndex = 0; lineIndex < ladder.getLadderLength().getLength() ;  lineIndex++) {
+            printSingleLine(ladder,users,lineIndex);
             System.out.println();
         }
     }
 
-    private static void printSingleLine(Users users, int lineIndex) {
+    private static void printSingleLine(Ladder ladder ,Users users , int lineIndex) {
         for (int userIndex = 0; userIndex < users.size(); userIndex++) {
             StringBuilder stringBuilder = new StringBuilder();
             User user = users.getUsers().get(userIndex);
             String username = getNameOfUser(user);
-            LineUnit unit = user.getVerticalLine().getLineUnits().get(lineIndex);
+            LineUnit unit = ladder.getLines().get(userIndex).getLineUnits().get(lineIndex);
             appendSingleLine(userIndex, stringBuilder, username, unit);
             System.out.print(stringBuilder);
         }

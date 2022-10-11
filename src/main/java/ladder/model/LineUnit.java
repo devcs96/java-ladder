@@ -30,4 +30,17 @@ public class LineUnit {
     }
 
 
+    public LineUnit move() {
+        if (this.hasNext()){
+            return this.next;
+        }
+        if (this.hasPrevious()){
+            return this.previous;
+        }
+        throw new IllegalStateException("움직일수 없는 상태입니다.");
+    }
+
+    public boolean canMove(){
+        return this.hasNext() || this.hasPrevious();
+    }
 }

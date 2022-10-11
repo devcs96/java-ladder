@@ -1,27 +1,33 @@
 package ladder.model;
 
+import java.util.Objects;
+
 public class User {
     private final UserName name;
 
-    private VerticalLine verticalLine;
 
     public User(UserName name) {
         this.name = name;
-    }
-
-    public void addLine(VerticalLine line) {
-        this.verticalLine = line;
-    }
-
-    public boolean hasLine() {
-        return verticalLine != null;
     }
 
     public UserName getName() {
         return name;
     }
 
-    public VerticalLine getVerticalLine() {
-        return verticalLine;
+    public static User createUserWithName(String name){
+        return new User(new UserName(name));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(name, user.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }
