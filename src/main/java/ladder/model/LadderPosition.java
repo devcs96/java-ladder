@@ -34,11 +34,4 @@ public class LadderPosition {
         return ladderLength;
     }
 
-    @Override
-    public String toString() {
-        return "LadderPosition{" +
-                "ladderLength=" + ladderLength +
-                ", horizontalPosition=" + horizontalPosition +
-                '}';
-    }
 }

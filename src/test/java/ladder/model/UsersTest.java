@@ -39,8 +39,8 @@ class UsersTest {
         User userB = createUserWithName("testB");
         Users users = new Users(List.of(userA,userB));
 
-        assertThat(users.findStartPositionByUsername(new UserName("testA"))).isEqualTo(0);
-        assertThat(users.findStartPositionByUsername(new UserName("testB"))).isEqualTo(1);
+        assertThat(users.findStartPositionByUsername(new UserName("testA"))).isEqualTo(List.of(0));
+        assertThat(users.findStartPositionByUsername(new UserName("testB"))).isEqualTo(List.of(1));
     }
 
     @Test

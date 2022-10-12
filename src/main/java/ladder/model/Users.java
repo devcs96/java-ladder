@@ -38,10 +38,15 @@ public class Users {
         return users;
     }
 
-    public int findStartPositionByUsername(UserName name) {
-        return IntStream.range(0,this.size())
-                .filter((idx)->this.users.get(idx).equals(new User(name)))
+    public List<Integer> findStartPositionByUsername(UserName name) {
+        if (name.isAllUser()){
+            return IntStream.range(0,this.size())
+                    .mapToObj((i)->i)
+                    .collect(Collectors.toList());
+        }
+        return List.of(IntStream.range(0, this.size())
+                .filter((idx) -> this.users.get(idx).equals(new User(name)))
                 .findFirst()
-                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다.")));
     }
 }

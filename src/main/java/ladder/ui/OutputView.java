@@ -2,63 +2,79 @@ package ladder.ui;
 
 import ladder.model.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+
 public abstract class OutputView {
 
-    private static final int LADDER_USER_INTERVAL = 6;
     private static final String LADDER_WITH_NO_SPACE = " ";
     private static final String HORIZONTAL_UNIT = "-";
     private static final String VERTICAL_UNIT = "|";
 
-    public static void printLadder(Users users, Ladder ladder) {
-        printName(users);
+    private static final String PLAY_RESULT_MSG = "실행 결과";
+    private static final int ADDITIONAL_SPACE = 1;
+
+    public static void printResult(UserName userName, Users users, List<String> result) {
+        System.out.println(PLAY_RESULT_MSG);
+        if (userName.isAllUser()){
+            for(int  i = 0 ; i <result.size() ; i++){
+                System.out.printf( "%s : %s \n", getNameOfUser(users.getUsers().get(i)) , result.get(i));
+            }
+            return;
+        }
+        System.out.printf( "%s : %s \n", userName.getName() , result.get(0));
+    }
+    public static void printLadder(Users users, Ladder ladder , LadderResult ladderResult) {
+
+        int maxInterval = findMaxInterval(users, ladderResult);
+        printName(users , maxInterval);
         System.out.println();
-        printLine(ladder , users);
+        printLine(ladder , maxInterval);
+        printResult(ladderResult , maxInterval);
     }
 
-    private static void printName(Users users) {
-        for (int userIndex = 0; userIndex < users.size(); userIndex++) {
-            printSingleName(users, userIndex);
-        }
+    private static void printResult(LadderResult result , int maxInterval){
+        result.getResult().stream().forEach((e)->print(e,maxInterval));
+    }
+    private static void printName(Users users , int maxInterval) {
+        users.getUsers().stream().forEach((user)->print(getNameOfUser(user),maxInterval));
     }
 
-    private static void printSingleName(Users users, int userIndex) {
-        String username = getNameOfUser(users.getUsers().get(userIndex));
-        if (userIndex == 0) {
-            System.out.print(username);
-            return;
-        }
-        System.out.print(addDelimiter(LADDER_USER_INTERVAL - username.length(), LADDER_WITH_NO_SPACE) + username);
-    }
-
-    private static void printLine(Ladder ladder ,Users users) {
-        for (int lineIndex = 0; lineIndex < ladder.getLadderLength().getLength() ;  lineIndex++) {
-            printSingleLine(ladder,users,lineIndex);
-            System.out.println();
-        }
-    }
-
-    private static void printSingleLine(Ladder ladder ,Users users , int lineIndex) {
-        for (int userIndex = 0; userIndex < users.size(); userIndex++) {
+    private static void printLine(Ladder ladder, int maxInterval){
+        List<VerticalLine> lines = ladder.getLines();
+        for (int i = 0 ; i < ladder.getLadderLength().getLength() ; i++){
             StringBuilder stringBuilder = new StringBuilder();
-            User user = users.getUsers().get(userIndex);
-            String username = getNameOfUser(user);
-            LineUnit unit = ladder.getLines().get(userIndex).getLineUnits().get(lineIndex);
-            appendSingleLine(userIndex, stringBuilder, username, unit);
-            System.out.print(stringBuilder);
+            for (int j = 0 ; j < ladder.getLines().size() ; j++){
+                LineUnit unit = lines.get(j).getLineUnits().get(i);
+                if (unit.hasPrevious()) {
+                    stringBuilder.append(addDelimiter(maxInterval - 1, HORIZONTAL_UNIT) + VERTICAL_UNIT);
+                    continue;
+                }
+                stringBuilder.append(addDelimiter(maxInterval - 1, LADDER_WITH_NO_SPACE) + VERTICAL_UNIT);
+            }
+            System.out.println(stringBuilder);
         }
     }
 
-    private static void appendSingleLine(int userIndex, StringBuilder stringBuilder, String username, LineUnit unit) {
-        if (userIndex == 0) {
-            stringBuilder.append(addDelimiter(username.length(), LADDER_WITH_NO_SPACE) + VERTICAL_UNIT);
-            return;
+
+    private static int findMaxInterval(Users users, LadderResult ladderResult) {
+        validate(users, ladderResult);
+        List<User> user = users.getUsers();
+        List<String> result = ladderResult.getResult();
+        int maxInterval = -1;
+        for (int i = 0 ; i < users.size() ; i++){
+            maxInterval = Math.max(user.get(i).getName().maxLength(result.get(i)) , maxInterval);
         }
-        if (unit.hasPrevious()) {
-            stringBuilder.append(addDelimiter(LADDER_USER_INTERVAL - 1, HORIZONTAL_UNIT) + VERTICAL_UNIT);
-            return;
-        }
-        stringBuilder.append(addDelimiter(LADDER_USER_INTERVAL - 1, LADDER_WITH_NO_SPACE) + VERTICAL_UNIT);
+        return maxInterval + ADDITIONAL_SPACE;
     }
+
+    private static void validate(Users users, LadderResult ladderResult) {
+        if (users.size() != ladderResult.size()){
+            throw new IllegalArgumentException("결과개수는 사용자 개수와 일치해야 합니다.");
+        }
+    }
+
 
     private static String addDelimiter(int length, String delimiter) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -68,7 +84,14 @@ public abstract class OutputView {
         return stringBuilder.toString();
     }
 
+    private static void print(String input , int maxInterval){
+        System.out.print(addDelimiter(maxInterval - input.length(),LADDER_WITH_NO_SPACE) + input);
+    }
+
     private static String getNameOfUser(User user) {
         return user.getName().getName();
     }
+
+
+
 }

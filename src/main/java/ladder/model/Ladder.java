@@ -1,6 +1,7 @@
 package ladder.model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Ladder {
 
@@ -12,9 +13,12 @@ public class Ladder {
         this.ladderLength = ladderLength;
     }
 
-    public LadderPosition play(int startPosition){
+    public List<LadderPosition> play(List<Integer> startPositions){
+        return startPositions.stream().map(this::play).collect(Collectors.toList());
+    }
+
+    LadderPosition play(int startPosition){
         LadderPosition ladderPosition = new LadderPosition(startPosition);
-        System.out.println("ladderPosition = " + ladderPosition);
         while (!ladderPosition.isArrived(this.ladderLength)){
             VerticalLine verticalLine = this.lines.get(ladderPosition.getHorizontalPosition());
             verticalLine.play(ladderPosition);

@@ -1,6 +1,7 @@
 package ladder.model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LadderResult {
 
@@ -11,8 +12,10 @@ public class LadderResult {
         this.result = result;
     }
 
-    public String getResult(LadderPosition position){
-        return result.get(position.getHorizontalPosition());
+    public List<String> result(List<LadderPosition> positions){
+        return positions.stream()
+                .map((position)->this.result.get(position.getHorizontalPosition()))
+                .collect(Collectors.toList());
     }
 
     private void validate(String result){
@@ -21,5 +24,12 @@ public class LadderResult {
         }
     }
 
+    public List<String> getResult() {
+        return result;
+    }
+
+    public int size(){
+        return this.result.size();
+    }
 
 }
